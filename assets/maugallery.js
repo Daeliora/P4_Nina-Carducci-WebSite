@@ -119,54 +119,54 @@
         .attr("src", element.attr("src"));
       $(`#${lightboxId}`).modal("toggle");
     },
-    prevImage() {
+
+    prevImage(lightboxId) {
       let activeImage = null;
       $("img.gallery-item").each(function() {
-        if ($(this).attr("src") === $(".lightboxImage").attr("src")) {
+        if (this.src === document.querySelector(`#${lightboxId} .lightboxImage`).src) {
           activeImage = $(this);
         }
       });
+
       let activeTag = $(".tags-bar span.active-tag").data("images-toggle");
       let imagesCollection = [];
-      if (activeTag === "all") {
-        $(".item-column").each(function() {
-          if ($(this).children("img").length) {
-            imagesCollection.push($(this).children("img"));
-          }
-        });
-      } else {
-        $(".item-column").each(function() {
-          if (
-            $(this)
-              .children("img")
-              .data("gallery-tag") === activeTag
-          ) {
-            imagesCollection.push($(this).children("img"));
-          }
-        });
-      }
-      let index = 0,
-        next = null;
+
+  $(".item-column").each(function() {
+    let img = $(this).children("img");
+    if (
+      activeTag === "all" ||
+      img.data("gallery-tag") === activeTag
+    ) {
+      imagesCollection.push(img);
+    }
+  });
+      
+      let index = -1;
 
       $(imagesCollection).each(function(i) {
         if ($(activeImage).attr("src") === $(this).attr("src")) {
           index = i ;
         }
       });
-      next =
-        imagesCollection[index] ||
+      
+      let prev =
+        imagesCollection[index - 1] ||
         imagesCollection[imagesCollection.length - 1];
-      $(".lightboxImage").attr("src", $(next).attr("src"));
+
+      $(".lightboxImage").attr("src", $(prev).attr("src"));
     },
-    nextImage() {
+
+    nextImage(lightboxId) {
       let activeImage = null;
       $("img.gallery-item").each(function() {
-        if ($(this).attr("src") === $(".lightboxImage").attr("src")) {
+        if (this.src === document.querySelector(`#${lightboxId} .lightboxImage`).src) {
           activeImage = $(this);
         }
       });
+
       let activeTag = $(".tags-bar span.active-tag").data("images-toggle");
       let imagesCollection = [];
+
       if (activeTag === "all") {
         $(".item-column").each(function() {
           if ($(this).children("img").length) {
@@ -184,17 +184,20 @@
           }
         });
       }
-      let index = 0,
-        next = null;
+
+      let index = -1;
 
       $(imagesCollection).each(function(i) {
         if ($(activeImage).attr("src") === $(this).attr("src")) {
           index = i;
         }
       });
-      next = imagesCollection[index] || imagesCollection[0];
+
+      let next = imagesCollection[index + 1] || imagesCollection[0];
+      
       $(".lightboxImage").attr("src", $(next).attr("src"));
     },
+    
     createLightBox(gallery, lightboxId, navigation) {
       gallery.append(`<div class="modal fade" id="${
         lightboxId ? lightboxId : "galleryLightbox"
